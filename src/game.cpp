@@ -1,0 +1,164 @@
+#include "game.h"
+#include "block.h"
+#include <random>
+
+game::game() {
+    clearGrid();
+    pauseGame();
+}
+
+bool game::isPaused() { return paused; }
+void game::pauseGame() { paused = true; }
+void game::unPauseGame() { paused = false; }
+
+void game::executeGame() {
+    // Don't perform any logic if the game is paused
+    if (paused == true or gameOver == true) {
+        return;
+    }
+
+    // Get the coordinate for the current block
+    std::vector<coord> coords = current_block.getCoordinates();
+
+    if (canFall(coords)) {
+        current_block.moveDown();
+    } else {
+        // Add current block to grid
+        placeBlock(coords);
+
+        // Find any rows that are filled after placing the current block
+        std::vector<int> lines = findLinesToClear(coords);
+
+        // If any rows were filled, then clear the lines and shift the grid
+        if (!lines.empty()) {
+            clearLines(lines);
+        }
+
+        // Generate a random new block type
+        int rand_num = getRandNumber(1, NUM_BLOCK_TYPES);
+        createNewBlock(rand_num);
+
+        // Check to see if the game should be over
+        if (shouldGameEnd(coords)) {
+            gameOver = true;
+            return;
+        }
+    }
+}
+
+int game::getRandNumber(int min, int max) {
+    // Generate a random number to select the next block type
+    std::random_device rd;                          // Seed
+    std::mt19937 gen(rd());                         // Mersenne Twister engine
+    std::uniform_int_distribution<> distr(min, max);    // Range [0, 6]
+
+    return distr(gen);
+}
+
+bool game::canFall(const std::vector<coord>& coords) {
+    for (int i = 0; i < coords.size(); i++) {
+        if (coords[i].y == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool game::canMoveLeft(const std::vector<coord>& coords) {
+    // Check to see if the block can move left without hitting
+    // any other blocks or the edge of the grid
+    for (int i = 0; i < coords.size(); i++) {
+        if (coords[i].x == 0) {
+            return false;
+        }
+
+        if (grid[coords[i].y][coords[i].x - 1] != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool game::canMoveRight(const std::vector<coord>& coords) {
+    // Check to see if the block can move right without hitting
+    // any other blocks or the edge of the grid
+    for (int i = 0; i < coords.size(); i++) {
+        if (coords[i].x == GRID_WIDTH - 1) {
+            return false;
+        }
+
+        if (grid[coords[i].y][coords[i].x + 1] != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void game::placeBlock(const std::vector<coord>& coords) {
+    // Update the values within the grid with the position of the block after moving
+    for (int i = 0; i < coords.size(); i++) {
+        grid[coords[i].y][coords[i].x] = static_cast<int>(current_block.type);
+    }
+}
+
+std::vector<int> game::findLinesToClear(const std::vector<coord>& coords) {
+    std::vector<int> lines;
+    // Iterate through cells within current block, and check if any rows within
+    // the grid have been filled
+    for (int i = 0; i < coords.size(); i++) {
+        bool line_filled = true;
+        for (int j = 0; j < GRID_WIDTH; j++) {
+            if (grid[i][j] == 0) {
+                line_filled = false;
+                break;
+            }
+        }
+
+        // Add line if no values within row are equal to 0
+        if (line_filled) {
+            lines.push_back(i);
+        }
+    }
+
+    // Reverse the list of filled lines for better clearing logic
+    std::reverse(lines.begin(), lines.end());
+
+    return lines;
+}
+
+void game::clearLines(const std::vector<int>& lines) {
+    // Shift all grid cells
+    for (int line: lines) {
+        for (int j = 0; j < GRID_WIDTH; j++) {
+            grid[line][j] = grid[line + 1][j];
+        }
+    }
+}
+
+void game::clearGrid() {
+    // Set all items within the grid to 0
+    for (int i = 0; i < GRID_HEIGHT; i++) {
+        for (int j = 0; j < GRID_WIDTH; j++) {
+            grid[i][j] = 0;
+        }
+    }
+}
+
+void game::createNewBlock(int blockType) {
+    // Set current blocktype to be random block type
+    current_block.setBlockType(BlockType(blockType));
+    // Set the global position of the current block
+    coord newGlobalCoord;
+    newGlobalCoord.x = MIDDLE_OF_GRID;
+    newGlobalCoord.y = 0;
+    current_block.setGlobalPosition(newGlobalCoord);
+}
+
+bool game::shouldGameEnd(const std::vector<coord>& coords) {
+    for (int i = 0; i < coords.size(); i++) {
+        if (grid[coords[i].y][coords[i].x] != 0) {
+            return true;
+        }
+    }
+    return false;
+}
