@@ -50,4 +50,5 @@ class SDLHandler {
     void drawSprite(int x, int y, SDL_COLOR color);
     void close();
     bool getQuitRequested();
+    void updateRenderer();
 };

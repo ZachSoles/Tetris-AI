@@ -1,5 +1,6 @@
 #include "game.h"
 #include <random>
+#include <chrono>    // For timing
 
 Game::Game() {
     clearGrid();
@@ -23,6 +24,7 @@ void Game::executeGame() {
 
     if (canFall(coords)) {
         current_block.moveDown();
+        redrawFlag = true;
     } else {
         // Add current block to grid
         placeBlock(coords);
@@ -38,6 +40,7 @@ void Game::executeGame() {
         // Generate a random new block type
         int rand_num = getRandNumber(1, NUM_BLOCK_TYPES);
         createNewBlock(rand_num);
+        redrawFlag = true;
 
         // Check to see if the game should be over
         if (shouldGameEnd(coords)) {
@@ -171,6 +174,7 @@ void Game::moveLeft() {
     }
 
     current_block.moveLeft();
+    redrawFlag = true;
 }
 
 void Game::moveRight() {
@@ -180,6 +184,7 @@ void Game::moveRight() {
     }
 
     current_block.moveRight();
+    redrawFlag = true;
 }
 
 void Game::moveDown() {
@@ -189,13 +194,18 @@ void Game::moveDown() {
     }
 
     current_block.moveDown();
+    redrawFlag = true;
 }
 
 void Game::rotate() {
     // Rotate block based on current rotation status and adding one
     current_block.rotateBlock(current_block.getRotationState() + 1);
+    redrawFlag = true;
 }
 
 std::vector<coord> Game::getCurrentBlockPosition() {
     return current_block.getCoordinates();
 }
+
+bool Game::shouldRedraw() { return redrawFlag; }
+void Game::resetRedrawFlag() { redrawFlag = false; }

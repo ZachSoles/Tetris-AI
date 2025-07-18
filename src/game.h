@@ -12,6 +12,7 @@ class Game {
         bool paused;
         bool gameOver;
         Block current_block;
+        bool redrawFlag = false;
         void clearGrid();
         std::vector<int> findLinesToClear(const std::vector<coord>& coordss);
         void clearLines(const std::vector<int>& lines);
@@ -35,5 +36,7 @@ class Game {
         void moveDown();
         void moveRight();
         void rotate();
+        bool shouldRedraw();
+        void resetRedrawFlag();
         std::vector<coord> getCurrentBlockPosition();
 };
