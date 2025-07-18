@@ -193,3 +193,7 @@ void Game::rotate() {
     // Rotate block based on current rotation status and adding one
     current_block.rotateBlock(current_block.getRotationState() + 1);
 }
+
+std::vector<coord> Game::getCurrentBlockPosition() {
+    return current_block.getCoordinates();
+}

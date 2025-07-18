@@ -35,4 +35,5 @@ class Game {
         void moveDown();
         void moveRight();
         void rotate();
+        std::vector<coord> getCurrentBlockPosition();
 };

@@ -8,7 +8,7 @@
 
 int main(int argc, char* argv[]) {
     // Initalize Game and SDL handler
-    SDLHandler sdl = SDLHandler("Tetris", 100, 100);
+    SDLHandler sdl = SDLHandler("Tetris", 64, 32);
     sdl.createWindow();
     Game tetrisGame = Game();
 
@@ -51,6 +51,13 @@ int main(int argc, char* argv[]) {
                 }
             default:
                 break;
+        }
+
+        // Draw the current block on the grid
+        std::vector<coord> coordinates = tetrisGame.getCurrentBlockPosition();
+        std::cout << "Drawing the current block..."  << std::endl;
+        for (int i = 0; i < (coordinates.size()); i++) {
+            sdl.drawSprite(coordinates[i].x, coordinates[i].y, SDL_COLOR::BLUE);
         }
     }
 
