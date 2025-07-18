@@ -6,7 +6,7 @@ const int GRID_VIEW_HEIGHT = 20;
 const int MIDDLE_OF_GRID = 5;
 const int NUM_BLOCK_TYPES = 7;
 
-class game {
+class Game {
     private:
         int grid[GRID_HEIGHT][GRID_WIDTH];
         bool paused;
@@ -24,11 +24,15 @@ class game {
         bool shouldGameEnd(const std::vector<coord>& coords);
 
     public:
-        game();
+        Game();
 
         void pauseGame();
         void unPauseGame();
         void executeGame();
         bool isPaused();
         bool isGameOver();
+        void moveLeft();
+        void moveDown();
+        void moveRight();
+        void rotate();
 };

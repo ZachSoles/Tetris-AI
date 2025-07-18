@@ -1,17 +1,16 @@
 #include "game.h"
-#include "block.h"
 #include <random>
 
-game::game() {
+Game::Game() {
     clearGrid();
     pauseGame();
 }
 
-bool game::isPaused() { return paused; }
-void game::pauseGame() { paused = true; }
-void game::unPauseGame() { paused = false; }
+bool Game::isPaused() { return paused; }
+void Game::pauseGame() { paused = true; }
+void Game::unPauseGame() { paused = false; }
 
-void game::executeGame() {
+void Game::executeGame() {
     // Don't perform any logic if the game is paused
     if (paused == true or gameOver == true) {
         return;
@@ -46,7 +45,7 @@ void game::executeGame() {
     }
 }
 
-int game::getRandNumber(int min, int max) {
+int Game::getRandNumber(int min, int max) {
     // Generate a random number to select the next block type
     std::random_device rd;                          // Seed
     std::mt19937 gen(rd());                         // Mersenne Twister engine
@@ -55,7 +54,7 @@ int game::getRandNumber(int min, int max) {
     return distr(gen);
 }
 
-bool game::canFall(const std::vector<coord>& coords) {
+bool Game::canFall(const std::vector<coord>& coords) {
     for (int i = 0; i < coords.size(); i++) {
         if (coords[i].y == 0) {
             return false;
@@ -64,7 +63,7 @@ bool game::canFall(const std::vector<coord>& coords) {
     return true;
 }
 
-bool game::canMoveLeft(const std::vector<coord>& coords) {
+bool Game::canMoveLeft(const std::vector<coord>& coords) {
     // Check to see if the block can move left without hitting
     // any other blocks or the edge of the grid
     for (int i = 0; i < coords.size(); i++) {
@@ -79,7 +78,7 @@ bool game::canMoveLeft(const std::vector<coord>& coords) {
     return true;
 }
 
-bool game::canMoveRight(const std::vector<coord>& coords) {
+bool Game::canMoveRight(const std::vector<coord>& coords) {
     // Check to see if the block can move right without hitting
     // any other blocks or the edge of the grid
     for (int i = 0; i < coords.size(); i++) {
@@ -94,14 +93,14 @@ bool game::canMoveRight(const std::vector<coord>& coords) {
     return true;
 }
 
-void game::placeBlock(const std::vector<coord>& coords) {
+void Game::placeBlock(const std::vector<coord>& coords) {
     // Update the values within the grid with the position of the block after moving
     for (int i = 0; i < coords.size(); i++) {
         grid[coords[i].y][coords[i].x] = static_cast<int>(current_block.type);
     }
 }
 
-std::vector<int> game::findLinesToClear(const std::vector<coord>& coords) {
+std::vector<int> Game::findLinesToClear(const std::vector<coord>& coords) {
     std::vector<int> lines;
     // Iterate through cells within current block, and check if any rows within
     // the grid have been filled
@@ -126,7 +125,7 @@ std::vector<int> game::findLinesToClear(const std::vector<coord>& coords) {
     return lines;
 }
 
-void game::clearLines(const std::vector<int>& lines) {
+void Game::clearLines(const std::vector<int>& lines) {
     // Shift all grid cells
     for (int line: lines) {
         for (int j = 0; j < GRID_WIDTH; j++) {
@@ -135,7 +134,7 @@ void game::clearLines(const std::vector<int>& lines) {
     }
 }
 
-void game::clearGrid() {
+void Game::clearGrid() {
     // Set all items within the grid to 0
     for (int i = 0; i < GRID_HEIGHT; i++) {
         for (int j = 0; j < GRID_WIDTH; j++) {
@@ -144,7 +143,7 @@ void game::clearGrid() {
     }
 }
 
-void game::createNewBlock(int blockType) {
+void Game::createNewBlock(int blockType) {
     // Set current blocktype to be random block type
     current_block.setBlockType(BlockType(blockType));
     // Set the global position of the current block
@@ -154,11 +153,43 @@ void game::createNewBlock(int blockType) {
     current_block.setGlobalPosition(newGlobalCoord);
 }
 
-bool game::shouldGameEnd(const std::vector<coord>& coords) {
+bool Game::shouldGameEnd(const std::vector<coord>& coords) {
     for (int i = 0; i < coords.size(); i++) {
         if (grid[coords[i].y][coords[i].x] != 0) {
             return true;
         }
     }
     return false;
+}
+
+void Game::moveLeft() {
+    // Exit if unable to move left within game grid
+    if (!canMoveLeft(current_block.getCoordinates())) {
+        return;
+    }
+
+    current_block.moveLeft();
+}
+
+void Game::moveRight() {
+    // Exit if unable to move right within game grid
+    if (!canMoveRight(current_block.getCoordinates())) {
+        return;
+    }
+
+    current_block.moveRight();
+}
+
+void Game::moveDown() {
+    // Exit if unable to move down within the game grid
+    if (!canFall(current_block.getCoordinates())) {
+        return;
+    }
+
+    current_block.moveDown();
+}
+
+void Game::rotate() {
+    // Rotate block based on current rotation status and adding one
+    current_block.rotateBlock(current_block.getRotationState() + 1);
 }

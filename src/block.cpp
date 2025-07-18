@@ -2,6 +2,10 @@
 
 int Block::getRotationState() { return curr_rotation_state; }
 
+Block::Block() {
+    
+}
+
 void Block::setBlockType(BlockType type) {
     switch (type) {
         case BlockType::I:
@@ -116,6 +120,6 @@ std::vector<coord> Block::getCoordinates() {
         coords[i].x += global_pos.x;
         coords[i].y += global_pos.y;
     }
-    
-    return coords
+
+    return coords;
 }

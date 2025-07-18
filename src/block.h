@@ -65,4 +65,4 @@ class Block {
         void moveDown();
         void setGlobalPosition(coord pos);
         std::vector<coord> getCoordinates();
-}
+};
