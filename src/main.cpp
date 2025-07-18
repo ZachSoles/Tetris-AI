@@ -55,8 +55,7 @@ int main(int argc, char* argv[]) {
 
         // Draw the current block on the grid
         std::vector<coord> coordinates = tetrisGame.getCurrentBlockPosition();
-        std::cout << "Drawing the current block..."  << std::endl;
-        for (int i = 0; i < (coordinates.size()); i++) {
+        for (int i = 0; i < coordinates.size(); i++) {
             sdl.drawSprite(coordinates[i].x, coordinates[i].y, SDL_COLOR::BLUE);
         }
     }

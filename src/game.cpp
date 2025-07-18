@@ -4,6 +4,8 @@
 Game::Game() {
     clearGrid();
     pauseGame();
+    int rand_num = getRandNumber(1, NUM_BLOCK_TYPES);
+    createNewBlock(rand_num);
 }
 
 bool Game::isPaused() { return paused; }

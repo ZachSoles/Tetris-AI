@@ -38,11 +38,8 @@ void SDLHandler::createWindow() {
     }
 
     // Present the rendered content to the window
-    SDL_RenderPresent(renderer);
-    
-    // Clear SDL renderer to black
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
 }
 
 void SDLHandler::close() {
@@ -52,6 +49,7 @@ void SDLHandler::close() {
 }
 
 void SDLHandler::drawSprite(int x, int y, SDL_COLOR color) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_Rect pixel_rect = {x * PIXEL_SCALE, y * PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE};
     SDL_RenderFillRect(renderer, &pixel_rect);
     SDL_RenderPresent(renderer);

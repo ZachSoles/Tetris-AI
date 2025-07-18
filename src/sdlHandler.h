@@ -25,7 +25,7 @@ enum class SDL_COLOR {
     PURPLE,
 };
 
-const int PIXEL_SCALE = 10;
+const int PIXEL_SCALE = 20;
 
 class SDLHandler {
     private:
