@@ -52,13 +52,13 @@ class Block {
     private:
         coord global_pos;
         int curr_rotation_state;
+        BlockType curr_block_type;
 
     public:
         Block();
-        BlockType type;
         std::vector<coord> curr_vector;
         void setBlockType(BlockType type);
-        void rotateBlock(int rotate_pos);
+        void rotateBlock();
         int getRotationState();
         void moveLeft();
         void moveRight();

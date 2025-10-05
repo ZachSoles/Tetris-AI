@@ -3,7 +3,6 @@
 #include <string>
 #include <iostream>  // For error output
 #include <chrono>    // For timing
-#include <ratio>
 #include <thread>   // Required for std::this_thread::sleep_for
 
 
@@ -17,8 +16,16 @@ int main(int argc, char* argv[]) {
     bool running = true;
     std::cout << "Starting game..."  << std::endl;
     std::vector<coord> coordinates = tetrisGame.getCurrentBlockPosition();
-    double frameTime = 1.0 / 60.0; // Target frame time (60 Hz)
+    double frameTime = 1.0 / 5.0; // Target frame time (60 Hz)
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
+    // Draw initial block
+    sdl.clearRenderer();
+    coordinates = tetrisGame.getCurrentBlockPosition();
+    for (int i = 0; i < coordinates.size(); i++) {
+        sdl.drawSprite(coordinates[i].x, coordinates[i].y, SDL_COLOR::BLUE);
+    }
+    sdl.updateRenderer();
 
     while (running) {
         // Run a single round of tetris
@@ -58,13 +65,24 @@ int main(int argc, char* argv[]) {
                 break;
         }
 
-        // Draw the current block on the grid
         if (tetrisGame.shouldRedraw()) {
+            sdl.clearRenderer();
+            // Draw the current block on the grid
             coordinates = tetrisGame.getCurrentBlockPosition();
             for (int i = 0; i < coordinates.size(); i++) {
                 sdl.drawSprite(coordinates[i].x, coordinates[i].y, SDL_COLOR::BLUE);
             }
+
+            // Draw the rest of the grid
+            for (int y = 0; y < GRID_HEIGHT; y++) {
+                for (int x = 0; x < GRID_WIDTH; x++) {
+                    if (tetrisGame.blockExists(x, y)) {
+                        sdl.drawSprite(x, y, SDL_COLOR::BLUE);
+                    }
+                }
+            }
             sdl.updateRenderer();
+            tetrisGame.resetRedrawFlag();
         }
 
         // Calculate elapsed time and sleep if necessary

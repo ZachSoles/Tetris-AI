@@ -31,7 +31,7 @@ void SDLHandler::createWindow() {
         SDL_Quit();
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!renderer) {
         std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         close();
@@ -51,6 +51,11 @@ void SDLHandler::drawSprite(int x, int y, SDL_COLOR color) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_Rect pixel_rect = {x * PIXEL_SCALE, y * PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE};
     SDL_RenderFillRect(renderer, &pixel_rect);
+}
+
+void SDLHandler::clearRenderer() {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set clear color to black (or whatever background you want)
+    SDL_RenderClear(renderer);
 }
 
 void SDLHandler::updateRenderer() {
@@ -97,9 +102,9 @@ void SDLHandler::pollInput() {
                         break;
                 }
                 break;
-            case SDL_KEYUP:
-                lastkeyPressed = keyMap::NONE;
-                break;
+            // case SDL_KEYUP:
+            //     lastkeyPressed = keyMap::NONE;
+            //     break;
             default:
                 break;
         }

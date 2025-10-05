@@ -1,10 +1,9 @@
 #include "game.h"
 #include <random>
-#include <chrono>    // For timing
 
 Game::Game() {
     clearGrid();
-    pauseGame();
+    // pauseGame();
     int rand_num = getRandNumber(1, NUM_BLOCK_TYPES);
     createNewBlock(rand_num);
 }
@@ -23,8 +22,7 @@ void Game::executeGame() {
     std::vector<coord> coords = current_block.getCoordinates();
 
     if (canFall(coords)) {
-        current_block.moveDown();
-        redrawFlag = true;
+        moveDown();
     } else {
         // Add current block to grid
         placeBlock(coords);
@@ -61,7 +59,10 @@ int Game::getRandNumber(int min, int max) {
 
 bool Game::canFall(const std::vector<coord>& coords) {
     for (int i = 0; i < coords.size(); i++) {
-        if (coords[i].y == 0) {
+        if (
+            coords[i].y == GRID_HEIGHT - 1 ||
+            blockExists(coords[i].x, coords[i].y + 1)
+        ) {
             return false;
         }
     }
@@ -101,7 +102,7 @@ bool Game::canMoveRight(const std::vector<coord>& coords) {
 void Game::placeBlock(const std::vector<coord>& coords) {
     // Update the values within the grid with the position of the block after moving
     for (int i = 0; i < coords.size(); i++) {
-        grid[coords[i].y][coords[i].x] = static_cast<int>(current_block.type);
+        grid[coords[i].y][coords[i].x] = 1;
     }
 }
 
@@ -112,7 +113,7 @@ std::vector<int> Game::findLinesToClear(const std::vector<coord>& coords) {
     for (int i = 0; i < coords.size(); i++) {
         bool line_filled = true;
         for (int j = 0; j < GRID_WIDTH; j++) {
-            if (grid[i][j] == 0) {
+            if (grid[coords[i].y][j] == 0) {
                 line_filled = false;
                 break;
             }
@@ -120,7 +121,7 @@ std::vector<int> Game::findLinesToClear(const std::vector<coord>& coords) {
 
         // Add line if no values within row are equal to 0
         if (line_filled) {
-            lines.push_back(i);
+            lines.push_back(coords[i].y);
         }
     }
 
@@ -160,7 +161,7 @@ void Game::createNewBlock(int blockType) {
 
 bool Game::shouldGameEnd(const std::vector<coord>& coords) {
     for (int i = 0; i < coords.size(); i++) {
-        if (grid[coords[i].y][coords[i].x] != 0) {
+        if (grid[coords[i].y][coords[i].x] == 0) {
             return true;
         }
     }
@@ -198,8 +199,7 @@ void Game::moveDown() {
 }
 
 void Game::rotate() {
-    // Rotate block based on current rotation status and adding one
-    current_block.rotateBlock(current_block.getRotationState() + 1);
+    current_block.rotateBlock();
     redrawFlag = true;
 }
 
@@ -209,3 +209,7 @@ std::vector<coord> Game::getCurrentBlockPosition() {
 
 bool Game::shouldRedraw() { return redrawFlag; }
 void Game::resetRedrawFlag() { redrawFlag = false; }
+
+bool Game::blockExists(int x, int y) {
+    return grid[y][x] != 0;
+}

@@ -3,10 +3,11 @@
 int Block::getRotationState() { return curr_rotation_state; }
 
 Block::Block() {
-    
+
 }
 
 void Block::setBlockType(BlockType type) {
+    curr_block_type = type;
     switch (type) {
         case BlockType::I:
             curr_vector = I_BLOCK_0_DEG;
@@ -32,86 +33,102 @@ void Block::setBlockType(BlockType type) {
     }
 }
 
-void Block::rotateBlock(int rotate_pos) {
-    switch (type) {
+void Block::rotateBlock() {
+    curr_rotation_state += 1;
+
+    switch (curr_block_type) {
         case BlockType::I:
-            if (rotate_pos == 1) {
-                curr_vector = I_BLOCK_0_DEG;
-            } else {
-                curr_vector = I_BLOCK_90_DEG;
+            switch (curr_rotation_state) {
+                case 2:
+                    curr_vector = I_BLOCK_90_DEG;
+                    break;
+                default:
+                    curr_vector = I_BLOCK_0_DEG;
+                    curr_rotation_state = 1;
+                    break;
             }
             break;
         case BlockType::T:
-            switch (rotate_pos) {
-                case 1:
-                    curr_vector = T_BLOCK_0_DEG;
-                    break;
+            switch (curr_rotation_state) {
                 case 2:
                     curr_vector = T_BLOCK_90_DEG;
                     break;
                 case 3:
                     curr_vector = T_BLOCK_180_DEG;
                     break;
-                default:
+                case 4:
                     curr_vector = T_BLOCK_270_DEG;
+                    break;
+                default:
+                    curr_vector = T_BLOCK_0_DEG;
+                    curr_rotation_state = 1;
                     break;
             }
             break;
         case BlockType::S:
-            if (rotate_pos == 1) {
-                curr_vector = S_BLOCK_0_DEG;
-            } else {
-                curr_vector = S_BLOCK_90_DEG;
+            switch (curr_rotation_state) {
+                case 2:
+                    curr_vector = S_BLOCK_90_DEG;
+                    break;
+                default:
+                    curr_vector = S_BLOCK_0_DEG;
+                    curr_rotation_state = 1;
+                    break;
             }
             break;
         case BlockType::Z:
-            if (rotate_pos == 1) {
-                curr_vector = Z_BLOCK_0_DEG;
-            } else {
-                curr_vector = Z_BLOCK_90_DEG;
+            switch (curr_rotation_state) {
+                case 2:
+                    curr_vector = Z_BLOCK_90_DEG;
+                    break;
+                default:
+                    curr_vector = Z_BLOCK_0_DEG;
+                    curr_rotation_state = 1;
+                    break;
             }
             break;
         case BlockType::J:
-            switch (rotate_pos) {
-                case 1:
-                    curr_vector = J_BLOCK_0_DEG;
-                    break;
+            switch (curr_rotation_state) {
                 case 2:
                     curr_vector = J_BLOCK_90_DEG;
                     break;
                 case 3:
                     curr_vector = J_BLOCK_180_DEG;
                     break;
-                default:
+                case 4:
                     curr_vector = J_BLOCK_270_DEG;
+                    break;
+                default:
+                    curr_vector = J_BLOCK_0_DEG;
+                    curr_rotation_state = 1;
                     break;
             }
             break;
         case BlockType::L:
-            switch (rotate_pos) {
-                case 1:
-                    curr_vector = L_BLOCK_0_DEG;
-                    break;
+            switch (curr_rotation_state) {
                 case 2:
                     curr_vector = L_BLOCK_90_DEG;
                     break;
                 case 3:
                     curr_vector = L_BLOCK_180_DEG;
                     break;
-                default:
+                case 4:
                     curr_vector = L_BLOCK_270_DEG;
+                    break;
+                default:
+                    curr_vector = L_BLOCK_0_DEG;
+                    curr_rotation_state = 1;
                     break;
             }
             break;
         default:
             break;
     }
-    curr_rotation_state = rotate_pos;
 }
 
 void Block::moveLeft() { global_pos.x -= 1; }
 void Block::moveRight() { global_pos.x += 1; }
-void Block::moveDown() { global_pos.y -= 1; }
+void Block::moveDown() { global_pos.y += 1; }
 void Block::setGlobalPosition(coord pos) { global_pos = pos; }
 
 std::vector<coord> Block::getCoordinates() {

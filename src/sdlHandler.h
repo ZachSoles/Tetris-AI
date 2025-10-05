@@ -51,4 +51,5 @@ class SDLHandler {
     void close();
     bool getQuitRequested();
     void updateRenderer();
+    void clearRenderer();
 };

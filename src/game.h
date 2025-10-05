@@ -38,5 +38,6 @@ class Game {
         void rotate();
         bool shouldRedraw();
         void resetRedrawFlag();
+        bool blockExists(int x, int y);
         std::vector<coord> getCurrentBlockPosition();
 };
